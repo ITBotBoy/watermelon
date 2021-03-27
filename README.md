@@ -1,7 +1,8 @@
 # Watermelon
 
 合成大西瓜，🍉   
-基于Cocos Creator v2.4.3
+基于Cocos Creator v2.4.3  
+可以通过访问 https://game.renserve.com/watermelon | https://watermelon-phi-ebon.vercel.app 预览。
 ### Todo
 - 重新开始
 - 排行榜
