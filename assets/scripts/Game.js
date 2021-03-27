@@ -84,7 +84,7 @@ cc.Class({
 
         this.useFinger = false
         // 距离上边界的位置
-        this.topBound = 20;
+        this.topBound = 10;
         // 地面位置
         this.buttomBound = 20;
         this.initPhysics()
@@ -260,10 +260,10 @@ cc.Class({
                 if (this.lastWidth === this.node.width && last_x === self.node.x && self.node.y + self.node.width / 2 > this.node.y - this.topBound) {
                     console.log("超出范围啦");
                     // 设置显示结束
-                    this.endNode.x = this.node.width / 2;
-                    this.endNode.y = this.node.height / 2;
-                    this.endNodeBG.x = this.node.width / 2;
-                    this.endNodeBG.y = this.node.height / 2;
+                    this.endNode.y =  0;
+                    this.endNodeBG.y = 0;
+                    this.endNode.zIndex=1000
+                    this.endNodeBG.zIndex=1000
                     // let endMsg = this.endNode.getComponent(cc.Label);
                     this.isEnd = true;
                 }

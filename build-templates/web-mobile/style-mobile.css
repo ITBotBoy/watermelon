@@ -35,7 +35,7 @@ body {
 
   cursor: default;
   color: #888;
-  background-color: #333;
+  /*background-color: #333;*/
 
   text-align: center;
   font-family: Helvetica, Verdana, Arial, sans-serif;
@@ -87,19 +87,30 @@ p.footer {
   left: 0;
   width: 100%;
   height: 100%;
-  background: #171717 url(./splash.png) no-repeat center;
-  background-size: 45%;
+    background-color: #fff;
+  /*background: #171717 url(./splash.png) no-repeat center;
+  background-size: 45%;*/
 }
-
+.progress {
+    position: absolute;
+    left: 0;
+    bottom: 50%;
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    color: #F49C09;
+}
 .progress-bar {
     position: absolute;
     left: 27.5%;
-    top: 80%;
+    top: 50%;
     height: 3px;
     padding: 2px;
     width: 45%;
     border-radius: 7px;
-    box-shadow: 0 1px 5px #000 inset, 0 1px 0 #444;           
+    border: 1px solid #999;
+    /*box-shadow: 0 1px 5px #000 inset, 0 1px 0 #444;*/
 }
 
 .progress-bar span {
