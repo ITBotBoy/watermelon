@@ -71,7 +71,12 @@ cc.Class({
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
-
+        this.fruitPool = new cc.NodePool();
+        let initCount = 2;
+        for (let i = 0; i < initCount; ++i) {
+            let enemy = cc.instantiate(this.fruitPrefab); // 创建节点
+            this.fruitPool.put(enemy); // 通过 put 接口放入对象池
+        }
         this.lastWidth = this.node.width;
         // 记录西瓜数量
         this.count = 0;
@@ -84,7 +89,7 @@ cc.Class({
 
         this.useFinger = false
         // 距离上边界的位置
-        this.topBound = 10;
+        this.topBound = 20;
         // 地面位置
         this.buttomBound = 20;
         this.initPhysics()
@@ -132,6 +137,7 @@ cc.Class({
         x = x - width / 2
         y = y - height / 2
         fruit.x = x;
+
         cc.tween(fruit)
         .by(0, { position: cc.v2(0, 0) }, { easing: t => 100000 * t * t })
         .call(() => {
@@ -143,7 +149,7 @@ cc.Class({
                 const nextId = this.getNextFruitId()
                 this.initOneFruit(nextId)
                 this.isCreating = false
-            }, 1)
+            }, .75)
         }).start();
     },
     // 获取下一个水果的id
@@ -178,9 +184,10 @@ cc.Class({
         other.node.off('sameContact') // 两个node都会触发，todo 看看有没有其他方法只展示一次的
         const id = other.getComponent('Fruit').id
         // todo 可以使用对象池回收
-        self.node.removeFromParent(true)
-        other.node.removeFromParent(true)
-
+        // self.node.removeFromParent(true)
+        // other.node.removeFromParent(true)
+        this.fruitPool.put(self.node);
+        this.fruitPool.put(other.node);
         const {x, y} = other.node
 
         this.createFruitJuice(id, cc.v2({x, y}), other.node.width)
@@ -220,6 +227,12 @@ cc.Class({
     },
     // Game.js
     createOneFruit(num) {
+        /*let fruit = null;
+        if (this.fruitPool.size() > 0) { // 通过 size 接口判断对象池中是否有空闲的对象
+            fruit = this.fruitPool.get();
+        } else { // 如果没有空闲对象，也就是对象池中备用对象不够时，我们就用 cc.instantiate 重新创建
+            fruit = cc.instantiate(this.fruitPrefab);
+        }*/
         let fruit = cc.instantiate(this.fruitPrefab);
         // 获取到配置信息
         const config = this.fruits[num - 1]
@@ -237,7 +250,7 @@ cc.Class({
         // 有Fruit组件传入
         fruit.on('sameContact', this.onSameFruitContact.bind(this))
         fruit.on('checkBound', this.onCheckBound.bind(this));
-        fruit.on(cc.Node.EventType.TOUCH_END, (e) => {
+        /*fruit.on(cc.Node.EventType.TOUCH_END, (e) => {
             // 选择道具时直接消除对应水果
             if (this.useFinger && fruit !== this.currentFruit) {
                 const {x, y, width} = fruit
@@ -245,30 +258,24 @@ cc.Class({
                 e.stopPropagation()
                 this.useFinger = false
                 fruit.removeFromParent(true)
-
             }
-        })
-
+        })*/
         return fruit
     },
 
     onCheckBound({ self, other }){
-        if (this.lastWidth === this.node.width && self.node.y + self.node.width / 2 > this.node.y - this.topBound) {
-            // TODO fix bug in here
-            const last_x = self.node.x;
-            setTimeout(() => {
-                if (this.lastWidth === this.node.width && last_x === self.node.x && self.node.y + self.node.width / 2 > this.node.y - this.topBound) {
-                    console.log("超出范围啦");
-                    // 设置显示结束
-                    this.endNode.y =  0;
-                    this.endNodeBG.y = 0;
-                    this.endNode.zIndex=1000
-                    this.endNodeBG.zIndex=1000
-                    // let endMsg = this.endNode.getComponent(cc.Label);
-                    this.isEnd = true;
-                }
-            }, 1500);
-        }
+        setTimeout(() => {
+            if (self.node.y + self.node.width / 2 > this.node.y - this.topBound) {
+                console.log("超出范围啦");
+                // 设置显示结束
+                this.endNode.y =  0;
+                this.endNodeBG.y = 0;
+                this.endNode.zIndex=1000
+                this.endNodeBG.zIndex=1000
+                // let endMsg = this.endNode.getComponent(cc.Label);
+                this.isEnd = true;
+            }
+        }, 1500);
     },
     // 开启物理引擎和碰撞检测
     initPhysics() {
@@ -276,7 +283,7 @@ cc.Class({
         const instance = cc.director.getPhysicsManager();
         instance.enabled = true;
         // instance.debugDrawFlags = 4
-        instance.gravity = cc.v2(0, -1080);
+        instance.gravity = cc.v2(0, -1000);
 
         // 碰撞检测
         const collisionManager = cc.director.getCollisionManager();
